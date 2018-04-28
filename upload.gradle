@@ -1,0 +1,33 @@
+apply plugin:'maven'
+
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: 'http://47.93.38.184:8081/nexus/content/repositories/ellabook/') {
+            authentication(userName: 'admin', password: 'faith1011')
+        }
+        pom.version = '1.0.13'
+        pom.artifactId = 'bookdownloader'
+        pom.groupId = 'com.ellabook'
+    }
+}
+
+task androidJavadocs(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    options.encoding = "utf-8"
+}
+
+task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+    classifier = 'javadoc'
+    from androidJavadocs.destinationDir
+}
+
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.sourceFiles
+}
+
+artifacts {
+    archives androidSourcesJar
+}
+
